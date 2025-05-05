@@ -1,0 +1,9 @@
+site_name: Web-Development
+nav:
+  - Лабораторная работа 1:
+      - Практика 1: LR1/task1.md
+      - Практика 2: LR1/task2.md
+      - Практика 3: LR1/task3.md
+      - Работа: LR1/lab.md
+theme:
+  name: material
