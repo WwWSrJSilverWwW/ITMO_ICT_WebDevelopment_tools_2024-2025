@@ -474,6 +474,9 @@ DATABASE_URL = os.getenv(&quot;DATABASE_URL&quot;)
 if not DATABASE_URL:
     raise RuntimeError(&quot;DATABASE_URL is not set in the environment!&quot;)
 
+config = context.config
+config.set_main_option(&quot;sqlalchemy.url&quot;, DATABASE_URL)
+
 ...
 </code></pre>
 <h2 id="_3"><strong>Файлы</strong></h2>
