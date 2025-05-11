@@ -10,7 +10,6 @@ class ParticipantTeamLink(SQLModel, table=True):
     team_id: Optional[int] = Field(
         default=None, foreign_key="team.id", primary_key=True
     )
-    role: str
     joined_at: datetime = Field(default_factory=datetime.utcnow)
 
 
@@ -23,15 +22,17 @@ class ParticipantDefault(SQLModel):
 class Participant(ParticipantDefault, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     teams: List["Team"] = Relationship(
-        back_populates="participants", link_model=ParticipantTeamLink
+        back_populates="participants",
+        link_model=ParticipantTeamLink
     )
-    evaluations: List["Evaluation"] = Relationship(back_populates="judge")
+    evaluations: List["Evaluation"] = Relationship(
+        back_populates="judge"
+    )
 
 
 class ParticipantRead(ParticipantDefault):
     id: int
-    teams: Optional[List["TeamRead"]]
-    evaluations: Optional[List["EvaluationRead"]]
+    evaluations: Optional[List["EvaluationRead"]] = None
 
 
 class ParticipantCreateOrUpdate(ParticipantDefault):
@@ -45,14 +46,17 @@ class TeamDefault(SQLModel):
 class Team(TeamDefault, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     participants: List[Participant] = Relationship(
-        back_populates="teams", link_model=ParticipantTeamLink
+        back_populates="teams",
+        link_model=ParticipantTeamLink
     )
-    submissions: List["Submission"] = Relationship(back_populates="team")
+    submissions: List["Submission"] = Relationship(
+        back_populates="team"
+    )
 
 
 class TeamRead(TeamDefault):
     id: int
-    participants: Optional[List[ParticipantRead]]
+    participants: Optional[List[ParticipantRead]] = None
 
 
 class TeamCreateOrUpdate(TeamDefault):
@@ -67,12 +71,14 @@ class ChallengeDefault(SQLModel):
 
 class Challenge(ChallengeDefault, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    submissions: List["Submission"] = Relationship(back_populates="challenge")
+    submissions: List["Submission"] = Relationship(
+        back_populates="challenge"
+    )
 
 
 class ChallengeRead(ChallengeDefault):
     id: int
-    submissions: Optional[List["SubmissionRead"]]
+    submissions: Optional[List["SubmissionRead"]] = None
 
 
 class ChallengeCreateOrUpdate(ChallengeDefault):
@@ -80,25 +86,27 @@ class ChallengeCreateOrUpdate(ChallengeDefault):
 
 
 class SubmissionDefault(SQLModel):
-    team_id: int
-    challenge_id: int
+    team_id: int = Field(foreign_key="team.id")
+    challenge_id: int = Field(foreign_key="challenge.id")
     file_url: str
 
 
 class Submission(SubmissionDefault, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     submitted_at: datetime = Field(default_factory=datetime.utcnow)
-    team: Team = Relationship(back_populates="submissions")
-    challenge: Challenge = Relationship(back_populates="submissions")
-    evaluations: List["Evaluation"] = Relationship(back_populates="submission")
+    team: "Team" = Relationship(back_populates="submissions")
+    challenge: "Challenge" = Relationship(back_populates="submissions")
+    evaluations: List["Evaluation"] = Relationship(
+        back_populates="submission"
+    )
 
 
 class SubmissionRead(SubmissionDefault):
     id: int
     submitted_at: datetime
-    team: Optional[TeamRead]
-    challenge: Optional[ChallengeRead]
-    evaluations: Optional[List["EvaluationRead"]]
+    team: Optional[TeamRead] = None
+    challenge: Optional[ChallengeRead] = None
+    evaluations: Optional[List["EvaluationRead"]] = None
 
 
 class SubmissionCreateOrUpdate(SubmissionDefault):
@@ -106,8 +114,8 @@ class SubmissionCreateOrUpdate(SubmissionDefault):
 
 
 class EvaluationDefault(SQLModel):
-    submission_id: int
-    judge_id: int
+    submission_id: int = Field(foreign_key="submission.id")
+    judge_id: int = Field(foreign_key="participant.id")
     score: float
     comments: Optional[str] = None
 
@@ -115,15 +123,15 @@ class EvaluationDefault(SQLModel):
 class Evaluation(EvaluationDefault, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     evaluated_at: datetime = Field(default_factory=datetime.utcnow)
-    submission: Submission = Relationship(back_populates="evaluations")
-    judge: Participant = Relationship(back_populates="evaluations")
+    submission: "Submission" = Relationship(back_populates="evaluations")
+    judge: "Participant" = Relationship(back_populates="evaluations")
 
 
 class EvaluationRead(EvaluationDefault):
     id: int
     evaluated_at: datetime
-    submission: Optional[SubmissionRead]
-    judge: Optional[ParticipantRead]
+    submission: Optional[SubmissionRead] = None
+    judge: Optional[ParticipantRead] = None
 
 
 class EvaluationCreateOrUpdate(EvaluationDefault):

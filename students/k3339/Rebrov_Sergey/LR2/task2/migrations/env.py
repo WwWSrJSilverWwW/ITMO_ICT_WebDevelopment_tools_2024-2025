@@ -10,14 +10,7 @@ from pathlib import Path
 
 from alembic import context
 
-from models import (
-    Participant,
-    Team,
-    ParticipantTeamLink,
-    Challenge,
-    Submission,
-    Evaluation,
-)
+from models import Page
 
 env_path = Path(__file__).resolve().parents[3] / '.env'
 load_dotenv(dotenv_path=env_path)
