@@ -18,9 +18,15 @@ async def parse(url: str):
             html = await response.text()
 
     soup = BeautifulSoup(html, "html.parser")
-    title = soup.title.string.strip() if soup.title else "No title"
+
+    name = soup.title.string.strip() if soup.title else "No name"
+
+    description = "No description"
+    meta_tag = soup.find("meta", attrs={"name": "description"})
+    if meta_tag and meta_tag.get("content"):
+        description = meta_tag["content"].strip()
 
     with get_session() as session:
-        page = Page(url=url, title=title)
+        page = Page(name=name, description=description)
         session.merge(page)
         session.commit()

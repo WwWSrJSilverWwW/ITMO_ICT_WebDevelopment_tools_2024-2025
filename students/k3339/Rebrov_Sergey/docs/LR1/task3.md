@@ -17,6 +17,9 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL is not set in the environment!")
 
+config = context.config
+config.set_main_option("sqlalchemy.url", DATABASE_URL)
+
 ...
 ```
 

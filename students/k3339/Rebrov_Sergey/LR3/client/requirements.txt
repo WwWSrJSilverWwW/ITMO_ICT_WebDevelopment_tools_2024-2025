@@ -5,4 +5,5 @@ aiohttp
 beautifulsoup4
 sqlalchemy
 sqlmodel
+python-dotenv
 psycopg2
